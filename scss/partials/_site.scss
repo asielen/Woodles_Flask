@@ -1,0 +1,74 @@
+
+#main {
+  @include outer-container();
+}
+
+/* Site Elements */
+
+button {
+  background-color: $secondary-color;
+  color: $primary-accent;
+  margin: 0.1em;
+  &:hover {
+    background-color: darken($secondary-color, 5);
+  }
+
+}
+
+#hero-bar {
+  width: 100%;
+  background-color: $primary-color;
+  color: $primary-accent;
+  text-align: center;
+
+}
+
+.frame-bar {
+  width: 100%;
+  height: 1em;
+  background-color: lighten($primary-color, 25);
+  @include media(max-height $short-bp) {
+      height: 0.5em;
+    }
+}
+
+footer {
+  margin-bottom: 0;
+  bottom: 0;
+  position: fixed;
+}
+
+/* Home */
+.home-nav {
+  @include media(min-width $large-bp) {
+    @include shift(3);
+  }
+  @include media(max-width $large-bp min-width $medium-bp) {
+    @include shift(1);
+  }
+}
+
+.home-body {
+  margin: 0 $body-margin;
+  .body-text {
+    margin-top: 2em;
+    margin-bottom: 2em;
+    p {
+      text-align: center;
+    }
+  }
+
+  button {
+    @include span-columns(3);
+    @include media(max-width $large-bp, 20) {
+      @include span-columns(6);
+    }
+    @include media(max-width $medium-bp) {
+      @include span-columns(12);
+    }
+  }
+
+}
+
+/* Card */
+/* Fixed Footer */

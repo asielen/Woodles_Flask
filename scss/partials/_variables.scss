@@ -1,0 +1,27 @@
+/* Organize Scss http://thesassway.com/beginner/how-to-structure-a-sass-project */
+/*http://www.joshfry.me/blog/2013/05/13/omega-reset-for-bourbon-neat/ Interesting */
+
+/* Breakpoints */
+$large-bp: 1056px;
+$medium-bp: 675px;
+$small-bp: 500px;
+$short-bp: 600px; // For smaller screens
+
+
+/* General Colors */
+$white: #FAFAFA;
+$black: #323234;
+$primary-color: #8C4646;
+$secondary-color: #4C93BF;
+$primary-accent: #F2E394;
+$secondary-accent: #F2AE72;
+
+/* Padding */
+$body-margin: 1em;
+
+/* Background colors*/
+$base-background-color: $white;
+
+
+/* For bitters override */
+$blue : $secondary-color;
