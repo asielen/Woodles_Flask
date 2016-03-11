@@ -1,6 +1,12 @@
+html, body, #main {
+  height: 100%;
+}
 
-#main {
+.content-width {
   @include outer-container();
+  @include media(max-width $large-bp) {
+    margin: 0 $body-margin;
+  }
 }
 
 /* Site Elements */
@@ -8,7 +14,7 @@
 button {
   background-color: $secondary-color;
   color: $primary-accent;
-  margin: 0.1em;
+  margin: 0.1em 0;
   &:hover {
     background-color: darken($secondary-color, 5);
   }
@@ -20,7 +26,14 @@ button {
   background-color: $primary-color;
   color: $primary-accent;
   text-align: center;
+}
 
+.body-text {
+  margin-top: 2em;
+  margin-bottom: 2em;
+  p {
+    text-align: center;
+  }
 }
 
 .frame-bar {
@@ -28,47 +41,61 @@ button {
   height: 1em;
   background-color: lighten($primary-color, 25);
   @include media(max-height $short-bp) {
-      height: 0.5em;
-    }
+    height: 0.5em;
+  }
 }
 
 footer {
   margin-bottom: 0;
   bottom: 0;
   position: fixed;
+  width: 100%;
 }
 
 /* Home */
-.home-nav {
-  @include media(min-width $large-bp) {
-    @include shift(3);
-  }
-  @include media(max-width $large-bp min-width $medium-bp) {
-    @include shift(1);
-  }
-}
 
 .home-body {
-  margin: 0 $body-margin;
-  .body-text {
-    margin-top: 2em;
-    margin-bottom: 2em;
-    p {
-      text-align: center;
+  .home-nav {
+    @include row();
+
+    @include media(min-width $large-bp) {
+      @include shift(2.4); //WHY!!!?? Some reason it wasn't centering right
+    }
+
+    button {
+      @include span-columns(3);
+      @include media(max-width $large-bp) {
+        @include span-columns(4);
+      }
+      @include media(max-width $medium-bp) {
+        @include span-columns(12);
+      }
     }
   }
-
-  button {
-    @include span-columns(3);
-    @include media(max-width $large-bp, 20) {
-      @include span-columns(6);
-    }
-    @include media(max-width $medium-bp) {
-      @include span-columns(12);
-    }
-  }
-
 }
 
 /* Card */
-/* Fixed Footer */
+#hero-bar #card-letter {
+  font-size: modular-scale(10);
+  padding: modular-scale(-12);
+  @include media(max-width $medium-bp) {
+    font-size: modular-scale(-2, modular-scale(10));
+  }
+}
+
+
+#card-nav {
+  button {
+    width: 150px;
+    margin-bottom: $body-margin;
+    &:last-of-type {
+      float: right;
+    }
+    @include media(max-width $small-bp) {
+      width: 45%;
+    }
+    
+  }
+}
+
+
