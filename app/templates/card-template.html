@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+{% block content %}
+    <section id="hero-bar"><h1 id="card-letter">{{ card.letter }}</h1></section>
+    <section id="body" class="content-width card-body" data-card-id="{{ card.id_string }}">
+        <button class="arrow" id="previous-question-arrow">▲</button>
+        <div id="questions">
+            <div class="question starter" id="{{ card.starter_question.id_string }}">
+                <p>{{ card.starter_question.question_text }}</p>
+                <p>{{ card.starter_question.answer_text }}</p>
+            </div>
+            {% for question in card.questions -%}
+                <div class="question" id="{{ question.id_string }}">
+                    <p>{{ question.question_text }}</p>
+                    <p>{{ question.answer_text }}</p>
+                </div>
+            {%- endfor %}
+        </div>
+        <button class="arrow" id="next-question-arrow">▼</button>
+    </section>
+{% endblock %}
+{% block footer %}
+    <nav id="card-nav" class="content-width">
+            <button id="submit-feedback"><h3>❗</h3></button>
+            <button id="start-timer"><h3>GO</h3></button>
+            <a href="{{ url_for('random_card') }}"><button id="next-card"><h3>➠</h3></button></a>
+            <button id="next-question"><h3>➨</h3></button>
+        </nav>
+        <div class="frame-bar"><h6>{{ card.id_string }}</h6></div>
+        <script src="/static/js/app.js"></script>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block head %}
+    {% if card %}
+        <meta http-equiv="refresh" content="3; url=/c/{{ card.id_string }}"/>
+    {% endif %}
+{% endblock %}
+{% block content %}
+    <section id="hero-bar"><h1>Send us your feedback</h1></section>
+    <section id="body" class="content-width home-body">
+        <div class="body-text">
+            <h3>
+                Thanks for the feedback!
+            </h3>
+            {% if card %}<p>You will be redirected to the card you came from shortly.</p>{% endif %}
+        </div>
+    </section>
+{% endblock %}

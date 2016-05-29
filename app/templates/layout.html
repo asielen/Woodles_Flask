@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Woodles</title>
+    <link rel="stylesheet" href="/static/css/app.css">
+    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>-->
+    <script src="/static/js/jquery.js"></script>
+    {% block head %}{% endblock %}
+</head>
+<body>
+<div id="main">
+    <div class="frame-bar"></div>
+    {% block content %}{% endblock %}
+    <footer>
+        {% block footer %}
+        <div class="frame-bar"></div>
+        {% endblock %}
+    </footer>
+</div>
+</body>
+</html>

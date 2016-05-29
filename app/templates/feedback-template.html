@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% block content %}
+    <section id="hero-bar"><h1>Send us your feedback</h1></section>
+    <section id="body" class="content-width home-body">
+        <div class="body-text">
+            <p>
+                Welcome to Woodles, the game the you can't something or other!
+            </p>
+            <p>
+                Click below to get started
+            </p>
+        </div>
+        <form action="" method="post" name="login">
+            {% if card %}
+                <p>CARD ID: <a href="{{ url_for('card',card_id=card.id_string) }}">{{ card.id_string }}</a></p>
+                {{ form.card_id }}
+            {% endif %}
+            {% if question %}
+                <p>QUESTION ID: {{ question.id_string }}</p>
+                {{ form.question_id }}
+            {% endif %}
+            {% if question or card %}
+                <p>
+                <h5>Does the card or question letter need to be updated?</h5>
+                Change letter:<br>
+                {{ form.letter }}<br>
+                </p>
+            {% endif %}
+            {% if question %}
+                <h5>Please use the fields below to make any modifications to the question and answer:</h5>
+                <p>
+                    Question:<br>
+                    {{ form.question_text }}<br>
+                </p>
+                <p>
+                    Answer:<br>
+                    {{ form.answer_text }}<br>
+                </p>
+            {% endif %}
+            <p>
+                General feedback?:<br>
+                {{ form.feedback }}<br>
+            </p>
+            <p><input type="submit" value="Submit"></p>
+        </form>
+    </section>
+{% endblock %}

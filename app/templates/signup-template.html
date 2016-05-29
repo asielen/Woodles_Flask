@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+{% block content %}
+    <section id="hero-bar"><h1>Send us your feedback</h1></section>
+    <section id="body" class="content-width home-body">
+        <div class="body-text">
+            <p>
+                Welcome to Woodles, the game the you can't something or other!
+            </p>
+        </div>
+        {% for message in form.email.errors %}
+            <div class="flash">{{ message }}</div>
+        {% endfor %}
+
+        {% for message in form.password.errors %}
+            <div class="flash">{{ message }}</div>
+        {% endfor %}
+        <form action="{{ url_for('signup') }}" method=post>
+            {{ form.hidden_tag() }}
+
+
+            {{ form.email.label }}
+            {{ form.email }}
+
+            {{ form.password.label }}
+            {{ form.password }}
+
+            {{ form.submit }}
+        </form>
+    </section>
+{% endblock %}

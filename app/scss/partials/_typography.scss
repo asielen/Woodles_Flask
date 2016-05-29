@@ -41,3 +41,21 @@ h3 {
     font-size: modular-scale(-2, modular-scale(4));
   }
 }
+h4 {
+  font-size: modular-scale(2);
+  @include media(max-width $medium-bp) {
+    font-size: modular-scale(-2, modular-scale(2));
+  }
+}
+h5 {
+  font-size: modular-scale(0);
+  @include media(max-width $medium-bp) {
+    font-size: modular-scale(-2, modular-scale(0));
+  }
+}
+h6 {
+  font-size: modular-scale(-2);
+  @include media(max-width $medium-bp) {
+    font-size: modular-scale(-2, modular-scale(-2));
+  }
+}
