@@ -1,5 +1,5 @@
 from flask import render_template, redirect, url_for
-import random
+from sqlalchemy.sql import func
 
 from app import app
 from app.models import Card
@@ -25,8 +25,8 @@ def card_id(card_id):
 
 @app.route('/c/random')
 def random_card():
-    rand = random.randrange(1, Card.query.count())
-    row = Card.query.get([rand])
+    # rand = random.randrange(1, Card.query.count())
+    row = Card.query.order_by(func.random()).first()
     return redirect(url_for('card', card_id=row.id_string))
 
 

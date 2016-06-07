@@ -1,11 +1,11 @@
 from flask import Flask
-from flask.ext.sqlalchemy import SQLAlchemy
-from flask.ext.login import LoginManager
 from flask.ext.admin import Admin
-
+from flask.ext.login import LoginManager
+from flask.ext.sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.config.from_object('config')
+# app.config['SQLALCHEMY_ECHO'] = "debug"
 db = SQLAlchemy(app)
 admin = Admin(app)
 login_manager = LoginManager()

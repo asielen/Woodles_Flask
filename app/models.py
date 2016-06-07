@@ -1,21 +1,21 @@
-from app import db
-from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy import func
+from sqlalchemy.ext.hybrid import hybrid_property
 from werkzeug.security import generate_password_hash, check_password_hash
+
+from app import db
 
 
 class Question(db.Model):
     __tablename__ = 'questions'
     id = db.Column(db.Integer, primary_key=True)
-    card_id = db.Column(db.Integer, db.ForeignKey('cards.id'))
     letter = db.Column(db.String(1))
-    card = db.relationship("Card", back_populates="questions")
+    card_id = db.Column(db.Integer, db.ForeignKey('cards.id'))
+    # card = db.relationship("Card", backref="questions", foreign_keys=[card_id])
     question_text = db.Column(db.String(128), unique=True)
     answer_text = db.Column(db.String(64))
     question_type_id = db.Column(db.Integer, db.ForeignKey('question_types.id'))
     question_type = db.relationship("Question_Type", back_populates="questions")
-    question_category_id = db.Column(db.Integer, db.ForeignKey('question_categories.id'))
-    question_category = db.relationship("Question_Category", back_populates="questions")
+    starter_question = db.Column(db.BOOLEAN)
 
     @hybrid_property
     def id_string(self):
@@ -25,13 +25,11 @@ class Question(db.Model):
     def id_string(cls):
         return func.concat(func.concat(
             func.concat(func.left(
-                db.engine.execute(
-                    db.select([Question_Type.type_name]).where(Question_Type.id == cls.question_type_id)).fetchone()[0],
+                    db.select([Question_Type.type_name]).where(Question_Type.id == cls.question_type_id).limit(1).as_scalar(),
                 1), cls.letter),
             func.right(func.concat('000000', cls.id), 6)), "Q")
 
-    def __init__(self, question_text, answer_text, letter, question_type, question_category):
-        # self.card = card
+    def __init__(self, question_text, answer_text, letter, question_type, starter_question=False):
         self.question_text = question_text
         self.answer_text = answer_text
         self.letter = letter
@@ -39,13 +37,10 @@ class Question(db.Model):
         if self.question_type is None:
             ct = Question_Type(type_name=question_type)
             self.question_type = ct
-        self.question_category = Question_Category.query.filter_by(category_name=question_category).first()
-        if self.question_category is None:
-            cc = Question_Category(category_name=question_category)
-            self.question_category = cc
+        self.starter_question = starter_question
 
     def __repr__(self):
-        return 'Question [ID {} <{} {}> = {}] - {} : {}'.format(self.id, self.question_type, self.question_category,
+        return 'Question [ID {} <{} {}> = {}] - {} : {}'.format(self.id, self.question_type, self.starter_question,
                                                                 self.id_string, self.question_text, self.answer_text)
 
 
@@ -63,19 +58,6 @@ class Question_Type(db.Model):
         return self.type_name
 
 
-class Question_Category(db.Model):
-    """
-        type: starter / standard
-    """
-    __tablename__ = 'question_categories'
-    id = db.Column(db.Integer, primary_key=True)
-    category_name = db.Column(db.String(32))
-    questions = db.relationship('Question', back_populates="question_category")
-
-    def __repr__(self):
-        return self.category_name
-
-
 class Card(db.Model):
     __tablename__ = 'cards'
     id = db.Column(db.Integer, primary_key=True)
@@ -87,8 +69,11 @@ class Card(db.Model):
     card_category_id = db.Column(db.Integer, db.ForeignKey('card_categories.id'))
     card_category = db.relationship('Card_Category', back_populates="cards")
 
-    starter_question = db.relationship('Question', back_populates='card')
-    questions = db.relationship('Question', back_populates='card')
+    starter_question = db.relationship('Question', uselist=False, primaryjoin="and_(Card.id==Question.card_id,Question.starter_question==True)")
+    standard_questions = db.relationship('Question', primaryjoin="and_(Card.id==Question.card_id,Question.starter_question==False)")
+
+    questions = db.relationship('Question')
+
 
     @hybrid_property
     def id_string(self):
@@ -96,14 +81,17 @@ class Card(db.Model):
 
     @id_string.expression
     def id_string(cls):
+        """ IN SQL:
+        SELECT CONCAT(CONCAT(CONCAT(LEFT((SELECT card_types.type_name FROM card_types WHERE card_types.id = cards.card_type_id),1),letter),RIGHT(CONCAT('000000',cards.id),6)),"C") as nid FROM cards;
+        """
         return func.concat(func.concat(
             func.concat(func.left(
-                db.engine.execute(
-                    db.select([Card_Type.type_name]).where(Card_Type.id == cls.card_type_id)).fetchone()[0], 1),
+                    db.select([Card_Type.type_name]).where(Card_Type.id == cls.card_type_id).limit(1).as_scalar(), 1),
                 cls.letter),
             func.right(func.concat('000000', cls.id), 6)), "C")
 
-    def __init__(self, letter, card_type, card_category, questions):
+
+    def __init__(self, letter, card_type, card_category, questions, game_card_id=None):
         self.letter = letter
         ct = Card_Type.query.filter_by(type_name=card_type).first()
         if ct is None:
@@ -113,14 +101,15 @@ class Card(db.Model):
         if cc is None:
             cc = Card_Category(category_name=card_category)
         self.card_category = cc
+        # self.starter_question = Question(starter_question["question"], starter_question["answer"], self.letter, card_type, starter_question=True)
         for question in questions:
             self.questions.append(
-                Question(question["question"], question["answer"], self.letter, card_type, card_category))
+                Question(question["question"], question["answer"], self.letter, card_type, question["starter_question"]))
+        self.game_card_id = game_card_id
 
     def __repr__(self):
         return 'Card [ID {} <{} {}> = {}] - {}'.format(self.id, self.card_type, self.card_category, self.id_string,
                                                        self.letter)
-
 
 class Card_Type(db.Model):
     """
@@ -149,9 +138,15 @@ class Card_Category(db.Model):
 class Feedback(db.Model):
     __tablename__ = 'feedback'
     id = db.Column(db.Integer, primary_key=True)
-    feedback_text = db.Column(db.String(512))
-    card_id = db.Column(db.Integer)
-    question_id = db.Column(db.Integer)
+    card_id = db.Column(db.Integer, db.ForeignKey('cards.id'))
+    card = db.relationship("Card", backref="feedback", foreign_keys=[card_id])
+    question_id = db.Column(db.Integer, db.ForeignKey('questions.id'))
+    question = db.relationship("Question", backref="feedback", foreign_keys=[question_id])
+    feedback_letter = db.Column(db.String(1))
+    feedback_question = db.Column(db.String(256))
+    feedback_answer = db.Column(db.String(256))
+    feedback_comments = db.Column(db.String(512))
+
 
 
 class User(db.Model):

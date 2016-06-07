@@ -1,19 +1,16 @@
+from urllib.parse import parse_qs
+
 from flask import url_for, render_template, request
 from flask.ext.login import login_user, logout_user, login_required
-from urllib.parse import parse_qs
 from werkzeug.utils import redirect
 
-import app
 from app import app, db
-from app.forms import SignupForm, LoginForm, QuestionFeedback, CardFeedback, FeedbackForm
+from app.forms import LoginForm, QuestionFeedback, CardFeedback, FeedbackForm
 from app.models import User, Question, Card
 
 
 @app.route('/submit-feedback', methods=['Get', 'Post'])  # ?card= &question=
 def submit_feedback():
-    # To Test
-    # http://127.0.0.1:5000/submit-feedback?card=TA000001C&question=TA000001Q
-    # http://127.0.0.1:5000/submit-feedback?card=TB000002C&question=TB000005Q
     query_string = parse_qs(request.query_string)
     current_card = current_question = None
     if b'question' in query_string:

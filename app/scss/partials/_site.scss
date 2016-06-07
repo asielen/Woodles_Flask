@@ -108,6 +108,10 @@ footer {
       background-color: $go-button-color;
       bottom: calc(#{$button-size} + (#{$button-margin} * 3));
       right: $button-margin;
+      h3 {
+            left: -9px;
+            position: relative;
+      }
     }
     &#next-question {
       bottom: calc(#{$button-margin} * 2);

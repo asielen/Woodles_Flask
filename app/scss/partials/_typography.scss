@@ -37,7 +37,7 @@ h2 {
 
 h3 {
   font-size: modular-scale(4);
-  @include media(max-width $medium-bp) {
+  @include media(max-width $small-bp) {
     font-size: modular-scale(-2, modular-scale(4));
   }
 }
