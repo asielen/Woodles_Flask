@@ -1,5 +1,6 @@
 from flask.ext.wtf import Form
-from wtforms import HiddenField, TextAreaField, StringField, ValidationError, PasswordField, validators, SubmitField
+from wtforms import HiddenField, TextAreaField, StringField, PasswordField, validators, SubmitField
+
 from .models import User
 
 
@@ -16,6 +17,8 @@ class QuestionFeedback(CardFeedback):
     question_id = HiddenField('question_id')
     question_text = TextAreaField('question_text')
     answer_text = TextAreaField('answer_text')
+
+#Todo, add card form
 
 
 class SignupForm(Form):

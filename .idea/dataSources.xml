@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="DataSourceManagerImpl" format="xml" hash="682535694">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
     <data-source source="LOCAL" name="MySQL - woodles@localhost" uuid="80295106-bb5d-4e44-b9c9-366db8113e11">
       <driver-ref>mysql</driver-ref>
       <synchronize>true</synchronize>
@@ -13,6 +13,22 @@
         <property name="characterSetResults" value="utf8" />
         <property name="yearIsDateType" value="false" />
       </driver-properties>
+    </data-source>
+    <data-source source="LOCAL" name="test" uuid="3d226afb-8f72-418b-af36-2db37c360cf2">
+      <driver-ref>6884f2c3-ae72-4f75-bb6b-31b647c916b9</driver-ref>
+      <synchronize>true</synchronize>
+      <imported>true</imported>
+      <remarks>SQLite</remarks>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:E:\Andrew\Documents\Programming\PycharmProjects\Woodles_Flask\test\test.db</jdbc-url>
+      <libraries>
+        <library>
+          <url>file://$APPLICATION_CONFIG_DIR$/jdbc-drivers/xerial-sqlite-license.txt</url>
+        </library>
+        <library>
+          <url>file://$APPLICATION_CONFIG_DIR$/jdbc-drivers/sqlite-jdbc-3.8.9.jar</url>
+        </library>
+      </libraries>
     </data-source>
   </component>
 </project>

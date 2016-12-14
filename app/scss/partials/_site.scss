@@ -109,8 +109,8 @@ footer {
       bottom: calc(#{$button-size} + (#{$button-margin} * 3));
       right: $button-margin;
       h3 {
-            left: -9px;
-            position: relative;
+        left: -9px;
+        position: relative;
       }
     }
     &#next-question {
@@ -126,6 +126,10 @@ footer {
       $button-size: 75px;
       height: $button-size;
       width: $button-size;
+      &#submit-feedback {
+        bottom: calc(#{$button-margin} * 2);
+        left: $button-margin;
+      }
       &#update-card {
         bottom: calc(#{$button-margin} * 2);
         left: $button-margin;

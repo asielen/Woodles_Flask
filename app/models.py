@@ -10,7 +10,6 @@ class Question(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     letter = db.Column(db.String(1))
     card_id = db.Column(db.Integer, db.ForeignKey('cards.id'))
-    # card = db.relationship("Card", backref="questions", foreign_keys=[card_id])
     question_text = db.Column(db.String(128), unique=True)
     answer_text = db.Column(db.String(64))
     question_type_id = db.Column(db.Integer, db.ForeignKey('question_types.id'))
@@ -183,5 +182,5 @@ class User(db.Model):
         return self.authenticated
 
     def is_anonymous(self):
-        """Always False, not ananymous users"""
+        """Always False, not anonymous users"""
         return False
