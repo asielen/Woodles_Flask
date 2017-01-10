@@ -133,6 +133,21 @@ class Card_Category(db.Model):
     def __repr__(self):
         return self.category_name
 
+class Session(db.Model):
+    __tablename__ = 'sessions'
+    id = db.Column(db.Integer, primary_key=True)
+    cards = db.Column(db.String(4096))
+    num_cards = db.Column(db.Integer)
+    num_players = db.Column(db.Integer)
+    session_id = db.Column(db.String(32))
+
+class Session_Player(db.Model):
+    __tablename__ = 'session_players'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50))
+    session_id = db.Column(db.Integer, db.ForeignKey('session.id'))
+    session = db.relationship("Session", backref="session_players", foreign_keys=[session_id])
+    score = db.Column(db.Integer)
 
 class Feedback(db.Model):
     __tablename__ = 'feedback'
@@ -145,8 +160,6 @@ class Feedback(db.Model):
     feedback_question = db.Column(db.String(256))
     feedback_answer = db.Column(db.String(256))
     feedback_comments = db.Column(db.String(512))
-
-
 
 class User(db.Model):
     __tablename__ = 'users'
