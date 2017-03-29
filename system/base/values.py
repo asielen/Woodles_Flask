@@ -5,15 +5,15 @@ __author__ = 'andrew.sielen'
 # This file is for global instance variables
 #
 
+#
+# SLOWPOOL = 10
+# FASTPOOL = 35
+# RUNNINGPOOL = SLOWPOOL
 
-SLOWPOOL = 10
-FASTPOOL = 35
-RUNNINGPOOL = SLOWPOOL
-
-
-price_types_lookup = {}
-inflation_lookup = {}
-update_history = {}
+#
+# price_types_lookup = {}
+# inflation_lookup = {}
+# update_history = {}
 
 # def init_lookups():
 #     pass
