@@ -1,22 +1,73 @@
+
 import csv
+import os
 
-import flask_admin as admin
-from flask.ext.admin import BaseView, expose
+from flask import flash, request, redirect, url_for
+# from flask.ext.admin import BaseView, expose
+# from flask_admin.contrib.sqla import filters
+# from wtforms import validators
+from flask.ext.security import login_required, current_user
 from flask_admin.contrib import sqla
-from flask_admin.contrib.sqla import filters
-from wtforms import validators
+from werkzeug.utils import secure_filename
 
-import app
 import system as syt
-from app import db
-from app.models import Card, User
+from app import app, admin, db
+from app.models import Question, Question_Type, Card, Card_Category, Card_Type, Feedback, Session, User
 
+admin.add_view(sqla.ModelView(Question, db.session))
+admin.add_view(sqla.ModelView(Question_Type, db.session))
+admin.add_view(sqla.ModelView(Card, db.session))
+admin.add_view(sqla.ModelView(Card_Type, db.session))
+admin.add_view(sqla.ModelView(Card_Category, db.session))
+admin.add_view(sqla.ModelView(Feedback, db.session))
+admin.add_view(sqla.ModelView(Session, db.session))
+#admin.add_view(sqla.ModelView(Session_Player, db.session))
+admin.add_view(sqla.ModelView(User, db.session))
 
-class MyView(BaseView):
-    @expose('/')
-    def index(self):
-        return self.render('index.html')
+class UserAdmin(sqla.ModelView):
+    # Don't display the password on the list of Users
+    column_exclude_list = ('password',)
 
+    # Don't include the standard password field when creating or editing a User (but see below)
+    form_excluded_columns = ('password',)
+    # Automatically display human-readable names for the current and available Roles when creating or editing a User
+    column_auto_select_related = True
+    def is_accessible(self):
+        return current_user.has_role('admin')
+
+ALLOWED_EXTENSIONS = set(['csv'])
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.route('/admin/import', methods=['GET', 'POST'])
+@login_required
+def upload_file():
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        # if user does not select file, browser also
+        # submit a empty part without filename
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return redirect(url_for('admin.index'))
+    return '''
+    <!doctype html>
+    <title>Upload new File</title>
+    <h1>Upload new File</h1>
+    <form method=post enctype=multipart/form-data>
+      <p><input type=file name=file>
+         <input type=submit value=Upload>
+    </form>
+    '''
 
 def import_card_csv(csv_file):
     if csv_file is not None and csv_file != 0:
@@ -55,64 +106,6 @@ def test_card_import():
     print(csv_file)
     import_card_csv(csv_file)
 
-
-# # Customized User model admin
-# class UserAdmin(sqla.ModelView):
-#     inline_models = (UserInfo,)
-
-
-# Customized Post model admin
-class PostAdmin(sqla.ModelView):
-    # Visible columns in the list view
-    column_exclude_list = ['text']
-
-    # List of columns that can be sorted. For 'user' column, use User.username as
-    # a column.
-    column_sortable_list = ('title', ('user', 'user.username'), 'date')
-
-    # Rename 'title' columns to 'Post Title' in list view
-    column_labels = dict(title='Post Title')
-
-    column_searchable_list = ('title', User.username, 'tags.name')
-
-    column_filters = ('user',
-                      'title',
-                      'date',
-                      'tags',
-                      filters.FilterLike(Post.title, 'Fixed Title', options=(('test1', 'Test 1'), ('test2', 'Test 2'))))
-
-    # Pass arguments to WTForms. In this case, change label for text field to
-    # be 'Big Text' and add required() validator.
-    form_args = dict(
-                    text=dict(label='Big Text', validators=[validators.required()])
-                )
-
-    form_ajax_refs = {
-        'user': {
-            'fields': (User.username, User.email)
-        },
-        'tags': {
-            'fields': (Tag.name,)
-        }
-    }
-
-    def __init__(self, session):
-        # Just call parent class with predefined model.
-        super(PostAdmin, self).__init__(Post, session)
-
-
-class TreeView(sqla.ModelView):
-    form_excluded_columns = ['children', ]
-
-
-# Create admin
-admin = admin.Admin(app, name='Example: SQLAlchemy', template_mode='bootstrap3')
-
-# Add views
-admin.add_view(UserAdmin(User, db.session))
-admin.add_view(sqla.ModelView(Tag, db.session))
-admin.add_view(PostAdmin(db.session))
-admin.add_view(TreeView(Tree, db.session))
 
 if __name__ == "__main__":
     test_card_import()

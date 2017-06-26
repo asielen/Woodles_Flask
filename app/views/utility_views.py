@@ -1,12 +1,12 @@
 from urllib.parse import parse_qs
 
 from flask import url_for, render_template, request
-from flask.ext.login import login_user, logout_user, login_required
+from flask.ext.login import login_required
 from werkzeug.utils import redirect
 
-from app import app, db
-from app.forms import LoginForm, QuestionFeedback, CardFeedback, FeedbackForm
-from app.models import User, Question, Card
+from app import app
+from app.forms import QuestionFeedback, CardFeedback, FeedbackForm
+from app.models import Question, Card
 
 
 @app.route('/submit-feedback', methods=['Get', 'Post'])  # ?card= &question=
@@ -64,35 +64,35 @@ def import_cards():
     return render_template('<p>Secret Page</p>')
 
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first_or_404()
-        if user.is_correct_password(form.password.data):
-            user.authenticated = True
-            db.session.add(user)
-            db.session.commit()
-            login_user(user, remember=True)
-            print("Successfull Login")
-            return redirect(url_for('index'))
-        else:
-            return redirect(url_for('login'))
-
-    return render_template('signup-template.html', form=form)
-
-
-@app.route('/logout', methods=["GET"])
-@login_required
-def logout():
-    # user = current_user
-    user.authenticated = False
-    db.session.add(user)
-    db.session.commit()
-    logout_user()
-    return redirect(url_for('index'))
-
-
-@app.login_manager.user_loader
-def user_loader(userid):
-    return app.models.User.get(userid).first()
+# @app.route('/login', methods=['GET', 'POST'])
+# def login():
+#     form = LoginForm()
+#     if form.validate_on_submit():
+#         user = User.query.filter_by(email=form.email.data).first_or_404()
+#         if user.is_correct_password(form.password.data):
+#             user.authenticated = True
+#             db.session.add(user)
+#             db.session.commit()
+#             login_user(user, remember=True)
+#             print("Successfull Login")
+#             return redirect(url_for('index'))
+#         else:
+#             return redirect(url_for('login'))
+#
+#     return render_template('signup-template.html', form=form)
+#
+#
+# @app.route('/logout', methods=["GET"])
+# @login_required
+# def logout():
+#     # user = current_user
+#     user.authenticated = False
+#     db.session.add(user)
+#     db.session.commit()
+#     logout_user()
+#     return redirect(url_for('index'))
+#
+#
+# @app.login_manager.user_loader
+# def user_loader(userid):
+#     return app.models.User.get(userid).first()
